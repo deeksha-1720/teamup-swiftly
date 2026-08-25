@@ -14,7 +14,72 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          availability: string | null
+          branch: string | null
+          city: string | null
+          college_name: string | null
+          company: string | null
+          created_at: string
+          current_role: string | null
+          email: string
+          id: string
+          interests: string[]
+          name: string
+          role_category: string | null
+          skills: string[]
+          updated_at: string
+          user_id: string
+          user_type: string
+          work_mode: string | null
+          year_of_study: string | null
+          years_of_experience: number | null
+        }
+        Insert: {
+          availability?: string | null
+          branch?: string | null
+          city?: string | null
+          college_name?: string | null
+          company?: string | null
+          created_at?: string
+          current_role?: string | null
+          email: string
+          id?: string
+          interests?: string[]
+          name: string
+          role_category?: string | null
+          skills?: string[]
+          updated_at?: string
+          user_id: string
+          user_type: string
+          work_mode?: string | null
+          year_of_study?: string | null
+          years_of_experience?: number | null
+        }
+        Update: {
+          availability?: string | null
+          branch?: string | null
+          city?: string | null
+          college_name?: string | null
+          company?: string | null
+          created_at?: string
+          current_role?: string | null
+          email?: string
+          id?: string
+          interests?: string[]
+          name?: string
+          role_category?: string | null
+          skills?: string[]
+          updated_at?: string
+          user_id?: string
+          user_type?: string
+          work_mode?: string | null
+          year_of_study?: string | null
+          years_of_experience?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
