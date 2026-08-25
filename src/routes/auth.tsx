@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,6 +20,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { RetroFlower, RetroSparkle } from "@/components/retro-decorations";
+import { Sparkles, ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -96,8 +99,6 @@ function AuthPage() {
       return;
     }
 
-    // Email confirmation is disabled, so the user is signed in immediately.
-    // Create their profile row right away.
     if (data.user) {
       const { error: profileError } = await supabase.from("profiles").insert({
         user_id: data.user.id,
@@ -110,7 +111,7 @@ function AuthPage() {
         setError(`Account created, but profile setup failed: ${profileError.message}`);
         return;
       }
-      navigate({ to: "/" });
+      navigate({ to: "/profile" });
     } else {
       setLoading(false);
       setError("Signup did not return a user. Please try signing in.");
@@ -118,134 +119,198 @@ function AuthPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
-      <header className="border-b border-border">
-        <div className="mx-auto flex h-14 max-w-5xl items-center px-4">
-          <Link to="/" className="text-lg font-semibold tracking-tight text-foreground">
-            ProjectMatch
+    <div className="flex min-h-screen flex-col bg-background selection:bg-orange-200">
+      <header className="border-b border-orange-200/70 bg-card/75 backdrop-blur-md">
+        <div className="mx-auto flex h-16 max-w-5xl items-center px-4 sm:px-6">
+          <Link to="/" className="flex items-center gap-2 group">
+            <RetroFlower size={24} color="#EA580C" centerColor="#FDE047" />
+            <span className="font-heading text-xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors">
+              ProjectMatch
+            </span>
           </Link>
         </div>
       </header>
 
-      <main className="flex flex-1 items-center justify-center px-4 py-12">
-        <Card className="w-full max-w-md">
-          <CardHeader>
-            <CardTitle className="text-xl">Welcome</CardTitle>
-            <CardDescription>
-              Sign in to your account or create a new one to start matching.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Tabs defaultValue="signin">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="signin">Sign in</TabsTrigger>
-                <TabsTrigger value="signup">Sign up</TabsTrigger>
-              </TabsList>
+      <main className="flex flex-1 items-center justify-center px-4 py-12 relative overflow-hidden">
+        {/* Background decorative doodles */}
+        <div className="absolute top-12 left-10 opacity-70 pointer-events-none hidden md:block">
+          <RetroFlower size={40} color="#FB923C" centerColor="#FEF08A" />
+        </div>
+        <div className="absolute bottom-12 right-12 opacity-80 pointer-events-none hidden md:block">
+          <RetroSparkle size={32} color="#F59E0B" />
+        </div>
 
-              <TabsContent value="signin">
-                <form onSubmit={handleSignIn} className="mt-4 space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="signin-email">Email</Label>
-                    <Input
-                      id="signin-email"
-                      type="email"
-                      required
-                      autoComplete="email"
-                      value={signInEmail}
-                      onChange={(e) => setSignInEmail(e.target.value)}
-                      placeholder="you@example.com"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signin-password">Password</Label>
-                    <Input
-                      id="signin-password"
-                      type="password"
-                      required
-                      autoComplete="current-password"
-                      value={signInPassword}
-                      onChange={(e) => setSignInPassword(e.target.value)}
-                      placeholder="••••••••"
-                    />
-                  </div>
-                  <Button type="submit" className="w-full" disabled={loading}>
-                    {loading ? "Signing in…" : "Sign in"}
-                  </Button>
-                </form>
-              </TabsContent>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.96, y: 15 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="w-full max-w-md"
+        >
+          <Card className="rounded-3xl border-2 border-orange-200/90 bg-card shadow-lg shadow-orange-950/5">
+            <CardHeader className="text-center pb-4">
+              <div className="mx-auto mb-2">
+                <RetroFlower size={34} color="#EA580C" centerColor="#FDE047" />
+              </div>
+              <CardTitle className="font-heading text-2xl font-bold text-foreground">
+                Join the Community
+              </CardTitle>
+              <CardDescription className="text-stone-600 text-xs">
+                Sign in to your account or create a new profile to team up!
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Tabs defaultValue="signin" className="w-full">
+                <TabsList className="grid w-full grid-cols-2 rounded-full p-1 bg-orange-100/70 border border-orange-200/70">
+                  <TabsTrigger
+                    value="signin"
+                    className="rounded-full text-xs font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm transition-all"
+                  >
+                    Sign in
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="signup"
+                    className="rounded-full text-xs font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm transition-all"
+                  >
+                    Sign up
+                  </TabsTrigger>
+                </TabsList>
 
-              <TabsContent value="signup">
-                <form onSubmit={handleSignUp} className="mt-4 space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-name">Full name</Label>
-                    <Input
-                      id="signup-name"
-                      type="text"
-                      required
-                      autoComplete="name"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      placeholder="Asha Rao"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-email">Email</Label>
-                    <Input
-                      id="signup-email"
-                      type="email"
-                      required
-                      autoComplete="email"
-                      value={signUpEmail}
-                      onChange={(e) => setSignUpEmail(e.target.value)}
-                      placeholder="you@example.com"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-password">Password</Label>
-                    <Input
-                      id="signup-password"
-                      type="password"
-                      required
-                      minLength={6}
-                      autoComplete="new-password"
-                      value={signUpPassword}
-                      onChange={(e) => setSignUpPassword(e.target.value)}
-                      placeholder="At least 6 characters"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-usertype">I am a</Label>
-                    <Select
-                      value={userType}
-                      onValueChange={(v) => setUserType(v as "student" | "industry")}
-                    >
-                      <SelectTrigger id="signup-usertype">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="student">Student</SelectItem>
-                        <SelectItem value="industry">Industry professional</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <Button type="submit" className="w-full" disabled={loading}>
-                    {loading ? "Creating account…" : "Create account"}
-                  </Button>
-                  <p className="text-xs text-muted-foreground">
-                    No email verification needed — you're signed in right away.
-                  </p>
-                </form>
-              </TabsContent>
-            </Tabs>
+                <TabsContent value="signin">
+                  <form onSubmit={handleSignIn} className="mt-5 space-y-4">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="signin-email" className="text-xs font-semibold text-stone-700">
+                        Email address
+                      </Label>
+                      <Input
+                        id="signin-email"
+                        type="email"
+                        required
+                        autoComplete="email"
+                        value={signInEmail}
+                        onChange={(e) => setSignInEmail(e.target.value)}
+                        placeholder="you@example.com"
+                        className="rounded-xl border-orange-200 focus-visible:ring-orange-500 bg-white/70"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="signin-password" className="text-xs font-semibold text-stone-700">
+                        Password
+                      </Label>
+                      <Input
+                        id="signin-password"
+                        type="password"
+                        required
+                        autoComplete="current-password"
+                        value={signInPassword}
+                        onChange={(e) => setSignInPassword(e.target.value)}
+                        placeholder="••••••••"
+                        className="rounded-xl border-orange-200 focus-visible:ring-orange-500 bg-white/70"
+                      />
+                    </div>
+                    <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                      <Button
+                        type="submit"
+                        className="w-full rounded-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-sm mt-2"
+                        disabled={loading}
+                      >
+                        {loading ? "Signing in…" : "Sign in to ProjectMatch"}
+                      </Button>
+                    </motion.div>
+                  </form>
+                </TabsContent>
 
-            {error && (
-              <p className="mt-4 rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
-                {error}
-              </p>
-            )}
-          </CardContent>
-        </Card>
+                <TabsContent value="signup">
+                  <form onSubmit={handleSignUp} className="mt-5 space-y-4">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="signup-name" className="text-xs font-semibold text-stone-700">
+                        Full name
+                      </Label>
+                      <Input
+                        id="signup-name"
+                        type="text"
+                        required
+                        autoComplete="name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder="Asha Rao"
+                        className="rounded-xl border-orange-200 focus-visible:ring-orange-500 bg-white/70"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="signup-email" className="text-xs font-semibold text-stone-700">
+                        Email address
+                      </Label>
+                      <Input
+                        id="signup-email"
+                        type="email"
+                        required
+                        autoComplete="email"
+                        value={signUpEmail}
+                        onChange={(e) => setSignUpEmail(e.target.value)}
+                        placeholder="you@example.com"
+                        className="rounded-xl border-orange-200 focus-visible:ring-orange-500 bg-white/70"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="signup-password" className="text-xs font-semibold text-stone-700">
+                        Password
+                      </Label>
+                      <Input
+                        id="signup-password"
+                        type="password"
+                        required
+                        minLength={6}
+                        autoComplete="new-password"
+                        value={signUpPassword}
+                        onChange={(e) => setSignUpPassword(e.target.value)}
+                        placeholder="At least 6 characters"
+                        className="rounded-xl border-orange-200 focus-visible:ring-orange-500 bg-white/70"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="signup-usertype" className="text-xs font-semibold text-stone-700">
+                        I am a
+                      </Label>
+                      <Select
+                        value={userType}
+                        onValueChange={(v) => setUserType(v as "student" | "industry")}
+                      >
+                        <SelectTrigger id="signup-usertype" className="rounded-xl border-orange-200 bg-white/70">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="rounded-xl border-orange-200">
+                          <SelectItem value="student">Student</SelectItem>
+                          <SelectItem value="industry">Industry professional</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                      <Button
+                        type="submit"
+                        className="w-full rounded-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-sm mt-2"
+                        disabled={loading}
+                      >
+                        {loading ? "Creating account…" : "Create account"}
+                      </Button>
+                    </motion.div>
+                    <p className="text-[11px] text-center text-stone-500">
+                      ✨ Instant access — no email confirmation required.
+                    </p>
+                  </form>
+                </TabsContent>
+              </Tabs>
+
+              {error && (
+                <p className="mt-4 rounded-xl bg-destructive/10 border border-destructive/20 px-3 py-2 text-xs text-destructive">
+                  {error}
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        </motion.div>
       </main>
     </div>
   );
 }
+
